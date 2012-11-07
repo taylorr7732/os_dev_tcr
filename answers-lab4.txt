@@ -1,0 +1,17 @@
+Taylor Rose tcr467 trose 
+Corbyn Salisbury cls3682 corbyns
+
+Lab 4
+
+1. MPBOOTPHYS is a macro to determine absolute addresses. These are all so that it can access various memory locations without depending on the linker for the addresses.  It is necessary for mpentry.S to use absolute addresses instead of depending on the linker, because this code is loaded dynamically and cannot always be mapped into its link addresses.  This means the linker might use addresses that are not valid for this AP. If it were omitted than all the APs would try to use the same addresses provided by the linker, even if they are invalid.  Boot.S can depend on the linker because it is loaded and executed at a known spot so the linker can produce the correct addresses.  
+
+2.  We need separate kernel stacks for each CPU, because the kernel may need to store information for later use on its stack.  Consider if the kernel runs on CPU1 and pushes information on the stack for the next time it is invoked by the environment on CPU1 then returns.  If the kernel then runs on CPU2 possibly altering memory on the stack, the next time the kernel is invoked on CPU1 the memory it needed may not be where it thinks or even there.\
+
+3. The address for the environment structure can be used after the page directory change, because the environment structure is stored in the kernel's memory.  The kernel's memory is shared across all processes, so regardless of the current process the kernel has access to all of its memory.
+
+
+For our Challenge, we decided to implemement a cross between FCFS and Priority.Here is how the algorithm works:
+The priority of the just finishing Environment is marked. If the current environment finished running, then we store it's priority.  We then proceed to loop through the remaining environment's until we find one that is runnable, and has an equal or high priority then the one stored.  If none is found, the environment with it's priority stored is ran again.
+An 8 bit priorty is appended to our env struct's to store priority. An environment can then make a sys call to set this priority byte.
+
+This Scheduling scheme gives you the best of FCFS, with high bandwidth/low latency, and Highest Priority, with more important jobs finishing first.
